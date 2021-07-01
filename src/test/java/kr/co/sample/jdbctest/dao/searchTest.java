@@ -10,13 +10,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.List;
 
-public class InsertTest {
-    /**
-     * EntityManagerFactory는 하나만 생성해서 애플리케이션 전체에서 공유
-     * EntityManager는 쓰레드간에 공유하며 안된다. (사용하고 버려야한다.)
-     * JPA의 모든 데이터 변경은 트랜잭션 안에서 실행
-     */
-
+public class searchTest {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello-db");
         EntityManager em = emf.createEntityManager();
@@ -34,10 +28,6 @@ public class InsertTest {
             member.setName("hello");
             member.setMemberType(MemberType.USER);
 
-            // 주인이 아님으로 MEMBER_ID 값 변경 안됨 (하지만 양쪽다 넣는걸로 추천)
-//            team.getMembers().add(member);
-
-
             // 참조 대신에 외래 키를 그대로 사용
 //            member.setTeamId(team.getId());
             // 팀객체를 넣어준다.
@@ -47,8 +37,8 @@ public class InsertTest {
 
 
             // 임시
-            em.flush(); // DB에 쿼리를 다 반영한다.
-            em.clear(); // 영속성 컨텍스트에 있는 캐시 모두 날려버린다.
+            em.flush();
+            em.clear();
 
 
             // 조회
@@ -66,6 +56,10 @@ public class InsertTest {
             for (Member member1 : members) {
                 System.out.println("member1 = " + member1);
             }
+
+            String jpql = "SELECT m FROM Member m WHERE m.name like '%hello%'";
+            List<Member> result = em.createQuery(jpql, Member.class).getResultList();
+
 
             tx.commit();
         } catch (Exception e) {
